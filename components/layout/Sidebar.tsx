@@ -20,7 +20,7 @@ const categories = [
 	{ name: "Baseball", count: 11 },
 ];
 
-export default function Sidebar({ mobileOpen, setMobileOpen }) {
+export default function Sidebar({ mobileOpen, setMobileOpen }: { mobileOpen: boolean, setMobileOpen: (val: boolean) => void }) {
 	const pathname = usePathname();
 	const [open, setOpen] = useState(true);
 
