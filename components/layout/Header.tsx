@@ -5,7 +5,7 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 
 // eslint-disable-next-line react/prop-types
-export default function Header({ onOpenMenu }) {
+export default function Header({ onOpenMenu }: { onOpenMenu: () => void }) {
   const [isAdminOpen, setIsAdminOpen] = useState(false);
   const [isNotifOpen, setIsNotifOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
