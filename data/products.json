@@ -1,5 +1,19 @@
 [
   {
+    "id": "1129fb8c-d96c-44fb-beba-1186ef64bd93",
+    "name": "s",
+    "description": "",
+    "category": "",
+    "brand": "",
+    "sku": "",
+    "stock_qty": 0,
+    "regular_price": 22,
+    "sale_price": 0,
+    "tags": [],
+    "imageUrl": "",
+    "created_at": "2026-05-02T10:16:30.564Z"
+  },
+  {
     "id": "a1f86376-d8af-47e9-8f9f-03e14b4e9ccd",
     "name": "kick 2",
     "description": "",

@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
+import { supabase } from "@/lib/supabaseClient";
 
 const emptyForm = {
   name: "",
@@ -24,15 +25,21 @@ export default function EditProductPage() {
 
   useEffect(() => {
     if (!id) return;
-    fetch(`/api/products/${id}`, { cache: "no-store" })
-      .then((r) => r.json())
-      .then((data) =>
-        setForm({
-          ...emptyForm,
-          ...data,
-          tags: Array.isArray(data?.tags) ? data.tags.join(", ") : data?.tags || "",
-        })
-      );
+    (async () => {
+      const { data, error } = await supabase
+        .from("products")
+        .select("*")
+        .eq("id", id)
+        .single();
+
+      if (error) return;
+
+      setForm({
+        ...emptyForm,
+        ...data,
+        tags: Array.isArray(data?.tags) ? data.tags.join(", ") : data?.tags || "",
+      });
+    })();
   }, [id]);
 
   const onChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) =>
@@ -40,45 +47,40 @@ export default function EditProductPage() {
 
   const onSubmit = async () => {
     if (!id) return;
-    const res = await fetch(`/api/products/${id}`, {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        ...form,
-        stock_qty: Number(form.stock_qty || 0),
-        regular_price: Number(form.regular_price || 0),
-        sale_price: Number(form.sale_price || 0),
-        tags: String(form.tags || "")
-          .split(",")
-          .map((t) => t.trim())
-          .filter(Boolean),
-      }),
-    });
 
-    if (!res.ok) {
+    const payload = {
+      ...form,
+      stock_qty: Number(form.stock_qty || 0),
+      regular_price: Number(form.regular_price || 0),
+      sale_price: Number(form.sale_price || 0),
+      tags: String(form.tags || "")
+        .split(",")
+        .map((t) => t.trim())
+        .filter(Boolean),
+    };
+
+    const { error } = await supabase.from("products").update(payload).eq("id", id);
+    if (error) {
       alert("حدث خطأ أثناء التعديل");
       return;
     }
 
     router.push("/dashboard/all-products");
-    router.refresh(); // إجبار Next.js على جلب البيانات من السيرفر مجدداً
+    router.refresh();
   };
 
   const onDelete = async () => {
     if (!id) return;
-
-    // تأكيد الحذف
     if (!confirm("هل أنت متأكد من حذف هذا المنتج؟")) return;
 
-    const res = await fetch(`/api/products/${id}`, { method: "DELETE" });
-
-    if (!res.ok) {
+    const { error } = await supabase.from("products").delete().eq("id", id);
+    if (error) {
       alert("حدث خطأ أثناء الحذف");
       return;
     }
 
     router.push("/dashboard/all-products");
-    router.refresh(); // تحديث الصفحة لضمان اختفاء المنتج
+    router.refresh();
   };
 
   if (!form) return null;
@@ -108,16 +110,10 @@ export default function EditProductPage() {
           </div>
 
           <div className="flex items-center gap-3">
-            <button
-              onClick={onSubmit}
-              className="bg-black text-white text-sm px-5 py-2 rounded-md"
-            >
+            <button onClick={onSubmit} className="bg-black text-white text-sm px-5 py-2 rounded-md">
               SAVE CHANGES
             </button>
-            <button
-              onClick={onDelete}
-              className="bg-red-600 text-white text-sm px-5 py-2 rounded-md"
-            >
+            <button onClick={onDelete} className="bg-red-600 text-white text-sm px-5 py-2 rounded-md">
               DELETE
             </button>
           </div>
