@@ -12,7 +12,7 @@ export default function Header({ onOpenMenu }: { onOpenMenu: () => void }) {
   const [searchQuery, setSearchQuery] = useState("");
   const router = useRouter();
 
-  const handleSearch = (e) => {
+  const handleSearch = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter' && searchQuery.trim()) {
       router.push(`/dashboard/all-products?search=${encodeURIComponent(searchQuery)}`);
       setIsSearchOpen(false);
