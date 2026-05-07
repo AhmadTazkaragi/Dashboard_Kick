@@ -1,10 +1,28 @@
 "use client";
-import { useState } from "react";
+
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import { supabase } from "@/lib/supabaseClient";
 import Sidebar from "@/components/layout/Sidebar";
 import Header from "@/components/layout/Header";
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
+  const router = useRouter();
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [checked, setChecked] = useState(false);
+
+  useEffect(() => {
+    (async () => {
+      const { data } = await supabase.auth.getUser();
+      if (!data?.user) {
+        router.replace("/login");
+      } else {
+        setChecked(true);
+      }
+    })();
+  }, [router]);
+
+  if (!checked) return null;
 
   return (
     <div className="flex flex-col lg:flex-row min-h-screen bg-[#E7E7E3]">

@@ -26,18 +26,13 @@ export default function EditProductPage() {
   useEffect(() => {
     if (!id) return;
     (async () => {
-      const { data, error } = await supabase
-        .from("products")
-        .select("*")
-        .eq("id", id)
-        .single();
-
+      const { data, error } = await supabase.from("products").select("*").eq("id", id).single();
       if (error) return;
-
       setForm({
         ...emptyForm,
         ...data,
         tags: Array.isArray(data?.tags) ? data.tags.join(", ") : data?.tags || "",
+        imageUrl: data?.imageurl || "",
       });
     })();
   }, [id]);
@@ -48,7 +43,7 @@ export default function EditProductPage() {
   const onSubmit = async () => {
     if (!id) return;
 
-    const payload = {
+    const { error } = await supabase.from("products").update({
       ...form,
       stock_qty: Number(form.stock_qty || 0),
       regular_price: Number(form.regular_price || 0),
@@ -57,11 +52,11 @@ export default function EditProductPage() {
         .split(",")
         .map((t) => t.trim())
         .filter(Boolean),
-    };
+      imageurl: form.imageUrl,
+    }).eq("id", id);
 
-    const { error } = await supabase.from("products").update(payload).eq("id", id);
     if (error) {
-      alert("حدث خطأ أثناء التعديل");
+      alert(error.message);
       return;
     }
 
@@ -71,19 +66,17 @@ export default function EditProductPage() {
 
   const onDelete = async () => {
     if (!id) return;
-    if (!confirm("هل أنت متأكد من حذف هذا المنتج؟")) return;
+    if (!confirm("هل أنت متأكد من حذف المنتج؟")) return;
 
     const { error } = await supabase.from("products").delete().eq("id", id);
     if (error) {
-      alert("حدث خطأ أثناء الحذف");
+      alert("فشل الحذف");
       return;
     }
 
     router.push("/dashboard/all-products");
     router.refresh();
   };
-
-  if (!form) return null;
 
   return (
     <div className="px-4 sm:px-6">
