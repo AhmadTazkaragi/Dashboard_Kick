@@ -76,14 +76,53 @@ const orders: Order[] = [
 
 const RecentOrders = () => {
   return (
-    <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-100 w-full">
+    <div className="bg-white p-4 sm:p-6 rounded-lg shadow-sm border border-gray-100 w-full">
       <div className="flex items-center justify-between mb-4">
         <h3 className="font-semibold">Recent Orders</h3>
         <MoreVertical size={16} />
       </div>
 
-      <div className="overflow-x-auto">
-        <table className="w-full text-sm">
+      {/* Mobile Cards */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 md:hidden">
+        {orders.map((order) => (
+          <div key={order.id} className="border border-gray-100 rounded-lg p-3">
+            <div className="flex items-center justify-between">
+              <div className="font-medium text-sm">{order.product}</div>
+              <div className="text-xs text-gray-500">{order.id}</div>
+            </div>
+            <div className="mt-2 flex items-center gap-2">
+              <Image
+                src={order.avatar}
+                alt={order.customer}
+                width={22}
+                height={22}
+                className="rounded-full"
+              />
+              <span className="text-sm">{order.customer}</span>
+            </div>
+            <div className="mt-2 flex items-center justify-between text-xs text-gray-500">
+              <span>{order.date}</span>
+              <span className="font-semibold text-gray-800">{order.amount}</span>
+            </div>
+            <div className="mt-2">
+              <span
+                className={`inline-flex items-center gap-2 text-xs ${
+                  order.status === "Delivered"
+                    ? "text-blue-600"
+                    : "text-orange-500"
+                }`}
+              >
+                <span className="w-2 h-2 rounded-full bg-current" />
+                {order.status}
+              </span>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* Desktop Table */}
+      <div className="hidden md:block overflow-x-auto">
+        <table className="w-full text-sm min-w-[640px] lg:min-w-[720px]">
           <thead>
             <tr className="text-gray-400 text-left">
               <th className="pb-3 font-medium">Product</th>

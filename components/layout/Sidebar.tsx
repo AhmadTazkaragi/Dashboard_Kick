@@ -32,7 +32,8 @@ export default function Sidebar({ mobileOpen, setMobileOpen }: { mobileOpen: boo
 				onClick={() => setMobileOpen(false)}
 			/>
 
-			<aside className={`fixed top-0 left-0 z-[60] w-72 bg-[#FAFAFA] border-r border-[#23232133] transform transition-transform duration-300 ease-in-out flex flex-col
+			<aside className={`fixed top-0 left-0 z-[60] w-full sm:w-72 bg-[#FAFAFA] border-r border-[#23232133] transform transition-transform duration-300 ease-in-out flex flex-col
+        h-screen min-h-screen
         ${mobileOpen ? "translate-x-0" : "-translate-x-full"}
         lg:sticky lg:top-0 lg:translate-x-0 lg:h-screen lg:self-start`}>
 				<div className="p-6 pt-8 flex items-center justify-center">
